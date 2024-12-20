@@ -1,0 +1,41 @@
+name: warehouse-project
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    hostname: mysql
+    networks:
+      my-bridge:
+        aliases:
+          - mysql
+    ports:                                                                                    
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: dbwarehouse 
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: userpass
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-server
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html  
+    networks:
+      my-bridge:
+        aliases:
+          - nginx
+
+volumes:
+  mysql_data:
+    name: mysql-data
+
+networks:
+  my-bridge:
+    name: my-bridge
+    external: true
